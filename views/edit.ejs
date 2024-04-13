@@ -7,17 +7,16 @@
     </div>
     <div class="flex flex-col items-center gap-2 mt-20">
       <div class="image w-20 h-20 bg-sky-100 rounded-full overflow-hidden">
-        <img class="h-full w-full object-cover" src="/images/uploads/<%= user.profileImg %>" alt="">
+        <img class="h-full w-full object-cover object-center" src="/images/uploads/<%= user.profileImg %>" alt="">
       </div>
       <button id="picture" class="text-blue-500 capitalize">edit picture</button>
     </div>
     <div class="gap-5 px-4 mt-10">
       <h3 class="text-lg leading-none">Edit Account Details</h3>
       <hr class="opacity-30 my-3">
-      <form id="uploadForm" action="/uploadPfP" enctype="multipart/form-data" method="post">
-        <input hidden name="image" type="file">
-      </form>
-      <form class="w-full" action="/edit" method="post">
+
+      <form class="w-full" action="/edit" enctype="multipart/form-data" method="post">
+        <input hidden name="image" id="uploadInp" onchange="previewImg(this)" type="file">
         <input class="px-3 mt-2 py-2 border-2 border-zinc-800 rounded-md block w-full bg-zinc-900" type="text" placeholder="username" name="username" value="<%= user.username %>">
         <input class="px-3 mt-2 py-2 border-2 border-zinc-800 rounded-md block w-full bg-zinc-900" type="text" placeholder="name" name="name" value="<%= user.name %>">
         <textarea class="px-3 mt-2 py-2 border-2 border-zinc-800 rounded-md block w-full bg-zinc-900 resize-none" placeholder="Bio" name="bio"><%= user.bio %></textarea>
@@ -28,10 +27,10 @@
 
   <script>
     document.querySelector("#picture").addEventListener("click",function(){
-      document.querySelector("#uploadForm input").click();
+      document.querySelector("#uploadInp").click();
     })
-    document.querySelector("#uploadForm").addEventListener("change",function(){
-      document.querySelector("#uploadForm").submit();
-    })
+    function previewImg(inp){
+      document.querySelector('img').src = URL.createObjectURL(inp.files[0]);
+    }
   </script>
 <% include ./partials/footer.ejs %>

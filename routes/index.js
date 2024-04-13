@@ -74,12 +74,7 @@ router.post('/login', passport.authenticate("local", {
   failureRedirect: '/login'
 }), function (req, res, next) { })
 
-router.post('/uploadPfP', isLoggedIn, upload.single('image'), async function (req, res, next) {
-  const user = await userModel.findOne({ username: req.session.passport.user });
-  user.profileImg = req.file.filename;
-  await user.save();
-  res.redirect('/edit');
-})
+
 router.post('/upload', isLoggedIn, upload.single('image'), async function (req, res, next) {
   const user = await userModel.findOne({ username: req.session.passport.user });
   if (req.body.category === 'post') {
@@ -87,6 +82,7 @@ router.post('/upload', isLoggedIn, upload.single('image'), async function (req, 
       caption: req.body.caption,
       user: user._id,
       postImg: req.file.filename,
+
     });
 
     user.postId.push(post._id);
@@ -101,10 +97,10 @@ router.post('/upload', isLoggedIn, upload.single('image'), async function (req, 
   res.redirect('/feed');
 })
 
-router.post('/edit', isLoggedIn, async function (req, res) {
+router.post('/edit', isLoggedIn,upload.single('image'), async function (req, res) {
   await messageModel.updateMany({ sender: req.session.passport.user }, { sender: req.body.username });
   await messageModel.updateMany({ reciever: req.session.passport.user }, { reciever: req.body.username });
-  const user = await userModel.findOneAndUpdate({ username: req.session.passport.user }, { username: req.body.username, bio: req.body.bio, name: req.body.name }, { new: true });
+  const user = await userModel.findOneAndUpdate({ username: req.session.passport.user }, { username: req.body.username, bio: req.body.bio,profileImg :req.file.filename, name: req.body.name }, { new: true });
   req.login(user, function (err) {
     if (err) throw err;
     res.redirect("/profile");
